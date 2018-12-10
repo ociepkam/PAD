@@ -44,8 +44,15 @@ def show_info(win, file_name, text_size, screen_width, insert=''):
                                 alignHoriz='center', alignVert='center')
     hello_msg.draw()
     win.flip()
-    key = event.waitKeys(keyList=['f7', 'return', 'space'])
-    if key == ['f7']:
+    while True:
+        key = event.getKeys()
+        print(key)
+        if key in [['f7'], ['return'], ['space']]:
+
+            break
+    #key = event.waitKeys(keyList=['f7', 'return', 'space'])
+    #exit(0)
+    if key[0] == ['f7']:
         logging.critical('Experiment finished by user! {} pressed.'.format(key[0]))
         exit(0)
     win.flip()
