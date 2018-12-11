@@ -1,9 +1,14 @@
 TRAINING_TRIALS: ["9"]
+EXPERIMENT_TRIALS: []
+
 TRAINING_FEEDBACK: True
 EXPERIMENT_FEEDBACK: False
+FEEDBACK_SHOW_TIME: 2
+
 
 # time in secunds
-STIM_TIME: 1
+STIM_TIME: 99
+WAIT_AFTER_ANSWER: 0.1
 WAIT_TIME: 1
 
 # visual parameters
@@ -17,7 +22,7 @@ N_ANSWERS_IN_ROW: 5
 
 # clock
 ## show clock n second before trial end
-SHOW_CLOCK: 3
-CLOCK_POS: [600, 400]
+SHOW_CLOCK: -1
+CLOCK_POS: [0, 0]
 CLOCK_SIZE: 50
 

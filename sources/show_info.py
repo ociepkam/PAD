@@ -1,4 +1,4 @@
-from psychopy import visual, event, logging
+from psychopy import visual, event, logging, clock
 import codecs
 import os
 
@@ -25,7 +25,7 @@ def read_text_from_file(file_name, insert=''):
     return ''.join(msg)
 
 
-def show_info(win, file_name, text_size, screen_width, insert=''):
+def show_info(win, file_name, text_size, screen_width, insert='', show_time=999999):
     """
     Clear way to show info message into screen.
     :param name: part name
@@ -43,18 +43,19 @@ def show_info(win, file_name, text_size, screen_width, insert=''):
                                 wrapWidth=screen_width, color=u'black',
                                 alignHoriz='center', alignVert='center')
     hello_msg.draw()
+    timer = clock.Clock()
+    win.callOnFlip(timer.reset)
+    event.clearEvents()
     win.flip()
-    while True:
-        key = event.getKeys()
-        print(key)
-        if key in [['f7'], ['return'], ['space']]:
 
+    while timer.getTime() < show_time:
+        event.clearEvents(eventType='mouse')
+        key = event.getKeys()
+        if key in [['f7'], ['return'], ['space']]:
+            if key[0] == ['f7']:
+                logging.critical('Experiment finished by user! {} pressed.'.format(key[0]))
+                exit(0)
             break
-    #key = event.waitKeys(keyList=['f7', 'return', 'space'])
-    #exit(0)
-    if key[0] == ['f7']:
-        logging.critical('Experiment finished by user! {} pressed.'.format(key[0]))
-        exit(0)
     win.flip()
 
 
