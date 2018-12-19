@@ -11,10 +11,10 @@ def experiment_info():
     date = now.strftime("%Y-%m-%d %H:%M")
 
     my_dlg = gui.Dlg(title="PAD")
-    my_dlg.addText('Subject info:')
-    my_dlg.addField('ID:')
-    my_dlg.addField('Age:')
-    my_dlg.addField('Sex:', choices=['MALE', "FEMALE"])
+    my_dlg.addText('Informacje:')
+    my_dlg.addField('Identyfikator:')
+    my_dlg.addField('Wiek:')
+    my_dlg.addField('Płeć:', choices=['Mężczyzna', "Kobieta"])
 
     my_dlg.show()
     if not my_dlg.OK:
