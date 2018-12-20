@@ -42,24 +42,33 @@ class Trial:
             elem["image"].setAutoDraw(draw)
         win.flip()
 
-    def run(self, config, win, response_clock, clock_image, mouse):
-
+    def run(self, config, win, response_clock, clock_image, mouse, accept_box):
+        accept_box.set_start_colors()
         win.callOnFlip(response_clock.reset)
         event.clearEvents()
+
+        accept_box.setAutoDraw(True)
         self.setAutoDraw(True, win)
         clock_is_shown = False
 
         while response_clock.getTime() < config["STIM_TIME"] and self.chosen_answer is None:
             for answer in self.answers:
                 if mouse.isPressedIn(answer["frame"]):
+                    for ans in self.answers:
+                        ans["frame"].setAutoDraw(False)
+                    self.acc = self.chosen_answer == "target"
+                    answer["frame"].setAutoDraw(True)
+                    accept_box.set_end_colors()
+                    win.flip()
+                    event.clearEvents()
+                    break
+                elif mouse.isPressedIn(accept_box.accept_box) and self.acc is not None:
+                    for ans in self.answers:
+                        ans["frame"].setAutoDraw(False)
                     self.rt = response_clock.getTime()
                     self.chosen_answer = answer["name"]
-                    self.acc = self.chosen_answer == "target"
-                    if config["WAIT_AFTER_ANSWER"] > 0:
-                        answer["frame"].setAutoDraw(True)
-                        win.flip()
-                        time.sleep(config["WAIT_AFTER_ANSWER"])
-                        answer["frame"].setAutoDraw(False)
+                    win.flip()
+                    event.clearEvents()
                     break
 
             if not clock_is_shown and config["STIM_TIME"] - response_clock.getTime() < config["SHOW_CLOCK"]:
@@ -71,6 +80,7 @@ class Trial:
             win.flip()
 
         clock_image.setAutoDraw(False)
+        accept_box.setAutoDraw(False)
         self.setAutoDraw(False, win)
 
     def info(self, exp, trial_nr):

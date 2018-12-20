@@ -51,8 +51,8 @@ def show_info(win, file_name, text_size, screen_width, insert='', show_time=9999
     while timer.getTime() < show_time:
         event.clearEvents(eventType='mouse')
         key = event.getKeys()
-        if key in [['f7'], ['return'], ['space']]:
-            if key[0] == ['f7']:
+        if key in [['q'], ['return'], ['space']]:
+            if key == ['q']:
                 logging.critical('Experiment finished by user! {} pressed.'.format(key[0]))
                 exit(0)
             break
@@ -63,8 +63,8 @@ def show_image(win, file_name, size):
     image = visual.ImageStim(win=win, image=os.path.join('images', file_name), interpolate=True, size=size)
     image.draw()
     win.flip()
-    key = event.waitKeys(keyList=['f7', 'return', 'space'])
-    if key == ['f7']:
+    key = event.waitKeys(keyList=['q', 'return', 'space'])
+    if key == ['q']:
         logging.critical('Experiment finished by user! {} pressed.'.format(key[0]))
         exit(0)
     win.flip()

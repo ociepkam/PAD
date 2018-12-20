@@ -7,8 +7,7 @@ FEEDBACK_SHOW_TIME: 2
 
 
 # time in secunds
-STIM_TIME: 99
-WAIT_AFTER_ANSWER: 0.1
+STIM_TIME: 10
 WAIT_TIME: 1
 
 # visual parameters
@@ -19,6 +18,15 @@ ANSWERS_SIZE: 150
 ANSWERS_POS: [0, -200]
 VIZ_OFFSET: [30, 30]
 N_ANSWERS_IN_ROW: 5
+
+# accept box
+ACCEPT_BOX_POS: [500, -300]
+ACCEPT_BOX_SIZE: [100, 50]
+ACCEPT_BOX_TEXT: Dalej
+START_BOX_COLOR: grey
+START_TEXT_COLOR: Gainsboro
+END_BOX_COLOR: white
+END_TEXT_COLOR: black
 
 # clock
 ## show clock n second before trial end

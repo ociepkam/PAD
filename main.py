@@ -4,13 +4,13 @@ import time
 
 from os.path import join
 import csv
-import random
 
 from sources.experiment_info import experiment_info
 from sources.load_data import load_config
 from sources.screen import get_screen_res, get_frame_rate
 from sources.show_info import show_info, show_image
 from sources.trail import Trial
+from sources.accept_box import AcceptBox
 
 part_id, part_sex, part_age, date = experiment_info()
 NAME = "{}_{}_{}".format(part_id, part_sex, part_age)
@@ -40,6 +40,11 @@ FRAMES_PER_SEC = get_frame_rate(win)
 
 clock_image = visual.ImageStim(win=win, image=join('images', 'clock.png'), interpolate=True,
                                size=config['CLOCK_SIZE'], pos=config['CLOCK_POS'])
+
+accept_box = AcceptBox(win, config["ACCEPT_BOX_POS"], config["ACCEPT_BOX_SIZE"], config["ACCEPT_BOX_TEXT"],
+                       config["START_BOX_COLOR"], config["START_TEXT_COLOR"], config["END_BOX_COLOR"],
+                       config["END_TEXT_COLOR"])
+
 mouse = event.Mouse()
 
 response_clock = core.Clock()
@@ -51,7 +56,8 @@ show_info(win, join('.', 'messages', "instruction1.txt"), text_size=config['TEXT
 # show_image(window, 'instruction.png', SCREEN_RES)
 for item in config["TRAINING_TRIALS"]:
     trial = Trial(win=win, config=config, item=item)
-    trial.run(config=config, win=win, response_clock=response_clock, clock_image=clock_image, mouse=mouse)
+    trial.run(config=config, win=win, response_clock=response_clock,
+              clock_image=clock_image, mouse=mouse, accept_box=accept_box)
     RESULTS.append(trial.info(exp=False, trial_nr=trial_nr))
     trial_nr += 1
     if config["TRAINING_FEEDBACK"]:
@@ -68,7 +74,8 @@ show_info(win, join('.', 'messages', "instruction2.txt"), text_size=config['TEXT
 
 for item in config["EXPERIMENT_TRIALS"]:
     trial = Trial(win=win, config=config, item=item)
-    trial.run(config=config, win=win, response_clock=response_clock, clock_image=clock_image, mouse=mouse)
+    trial.run(config=config, win=win, response_clock=response_clock,
+              clock_image=clock_image, mouse=mouse, accept_box=accept_box)
     RESULTS.append(trial.info(exp=True, trial_nr=trial_nr))
     trial_nr += 1
     if config["EXPERIMENT_FEEDBACK"]:
