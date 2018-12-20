@@ -42,7 +42,8 @@ class Trial:
             elem["image"].setAutoDraw(draw)
         win.flip()
 
-    def run(self, config, win, response_clock, clock_image, mouse, accept_box):
+    def run(self, config, win, response_clock, clock_image, mouse, accept_box,
+            feedback, feedback_positive, feedback_negative):
         accept_box.set_start_colors()
         win.callOnFlip(response_clock.reset)
         event.clearEvents()
@@ -69,6 +70,15 @@ class Trial:
                     self.chosen_answer = answer["name"]
                     win.flip()
                     event.clearEvents()
+                    if feedback:
+                        if self.acc:
+                            feedback_positive.setAutoDraw(True)
+                        else:
+                            feedback_negative.setAutoDraw(True)
+                        win.flip()
+                        time.sleep(config["FEEDBACK_SHOW_TIME"])
+                        feedback_positive.setAutoDraw(False)
+                        feedback_negative.setAutoDraw(False)
                     break
 
             if not clock_is_shown and config["STIM_TIME"] - response_clock.getTime() < config["SHOW_CLOCK"]:
