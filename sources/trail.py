@@ -15,7 +15,10 @@ class Trial:
                                 size=config['TASK_SIZE'], pos=config['TASK_POS'])
 
         answers = []
-        for i, elem in enumerate([elem for elem in images if elem.split(".")[0] != item]):
+        elements = [elem for elem in images if elem.split(".")[0] != item]
+        random.shuffle(elements)
+
+        for i, elem in enumerate(elements):
             pos_x = config['ANSWERS_POS'][0] - ((config["N_ANSWERS_IN_ROW"] - 1) / 2 - i % config["N_ANSWERS_IN_ROW"]) \
                     * (config["ANSWERS_SIZE"] + config["VIZ_OFFSET"][0])
             pos_y = config['ANSWERS_POS'][1] - i//config["N_ANSWERS_IN_ROW"] \
@@ -27,7 +30,6 @@ class Trial:
             frame = visual.Rect(win, width=config["ANSWERS_SIZE"], height=config["ANSWERS_SIZE"],
                                 pos=[pos_x, pos_y], lineColor="red")
             answers.append({"name": elem.split(".")[0].split("_", 1)[1], "image": image, "frame": frame})
-        random.shuffle(answers)
 
         self.name = item
         self.task = task
@@ -52,34 +54,22 @@ class Trial:
         self.setAutoDraw(True, win)
         clock_is_shown = False
 
-        while response_clock.getTime() < config["STIM_TIME"] and self.chosen_answer is None:
+        while response_clock.getTime() < config["STIM_TIME"]:
             for answer in self.answers:
                 if mouse.isPressedIn(answer["frame"]):
                     for ans in self.answers:
                         ans["frame"].setAutoDraw(False)
-                    self.acc = self.chosen_answer == "target"
                     answer["frame"].setAutoDraw(True)
+                    self.chosen_answer = answer["name"]
+                    self.acc = self.chosen_answer == "target"
+                    print(self.acc)
                     accept_box.set_end_colors()
                     win.flip()
                     event.clearEvents()
                     break
-                elif mouse.isPressedIn(accept_box.accept_box) and self.acc is not None:
-                    for ans in self.answers:
-                        ans["frame"].setAutoDraw(False)
-                    self.rt = response_clock.getTime()
-                    self.chosen_answer = answer["name"]
-                    win.flip()
-                    event.clearEvents()
-                    if feedback:
-                        if self.acc:
-                            feedback_positive.setAutoDraw(True)
-                        else:
-                            feedback_negative.setAutoDraw(True)
-                        win.flip()
-                        time.sleep(config["FEEDBACK_SHOW_TIME"])
-                        feedback_positive.setAutoDraw(False)
-                        feedback_negative.setAutoDraw(False)
-                    break
+            if mouse.isPressedIn(accept_box.accept_box) and self.chosen_answer is not None:
+                self.rt = response_clock.getTime()
+                break
 
             if not clock_is_shown and config["STIM_TIME"] - response_clock.getTime() < config["SHOW_CLOCK"]:
                 clock_image.setAutoDraw(True)
@@ -89,6 +79,25 @@ class Trial:
             check_exit()
             win.flip()
 
+        if feedback:
+            true_answer = str(self.answers.index([a for a in self.answers if a["name"] == "target"][0]) + 1)
+            if self.acc:
+                feedback_positive.text += true_answer
+                feedback_positive.setAutoDraw(True)
+                win.flip()
+                time.sleep(config["FEEDBACK_SHOW_TIME"])
+                feedback_positive.text = feedback_positive.text[:-len(true_answer)]
+            else:
+                feedback_negative.text += true_answer
+                feedback_negative.setAutoDraw(True)
+                win.flip()
+                time.sleep(config["FEEDBACK_SHOW_TIME"])
+                feedback_negative.text = feedback_negative.text[:-len(true_answer)]
+            feedback_positive.setAutoDraw(False)
+            feedback_negative.setAutoDraw(False)
+
+        for ans in self.answers:
+            ans["frame"].setAutoDraw(False)
         clock_image.setAutoDraw(False)
         accept_box.setAutoDraw(False)
         self.setAutoDraw(False, win)

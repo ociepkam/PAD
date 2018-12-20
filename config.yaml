@@ -1,4 +1,4 @@
-TRAINING_TRIALS: ["9"]
+TRAINING_TRIALS: ["9", "9"]
 EXPERIMENT_TRIALS: ["9"]
 
 # feedback
