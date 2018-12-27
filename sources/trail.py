@@ -19,9 +19,13 @@ class Trial:
         random.shuffle(elements)
 
         for i, elem in enumerate(elements):
-            pos_x = config['ANSWERS_POS'][0] - ((config["N_ANSWERS_IN_ROW"] - 1) / 2 - i % config["N_ANSWERS_IN_ROW"]) \
+            if len(elements) >= config["N_ANSWERS_IN_ROW"]:
+                answers_in_row = config["N_ANSWERS_IN_ROW"]
+            else:
+                answers_in_row = len(elements)
+            pos_x = config['ANSWERS_POS'][0] - ((answers_in_row - 1) / 2 - i % answers_in_row) \
                     * (config["ANSWERS_SIZE"] + config["VIZ_OFFSET"][0])
-            pos_y = config['ANSWERS_POS'][1] - i//config["N_ANSWERS_IN_ROW"] \
+            pos_y = config['ANSWERS_POS'][1] - i//answers_in_row \
                     * (config["ANSWERS_SIZE"] + config["VIZ_OFFSET"][1])
 
             image = visual.ImageStim(win=win, image=join('images', item, elem), interpolate=True,
@@ -62,7 +66,6 @@ class Trial:
                     answer["frame"].setAutoDraw(True)
                     self.chosen_answer = answer["name"]
                     self.acc = self.chosen_answer == "target"
-                    print(self.acc)
                     accept_box.set_end_colors()
                     win.flip()
                     event.clearEvents()
@@ -80,19 +83,32 @@ class Trial:
             win.flip()
 
         if feedback:
+            time.sleep(0.1)
             true_answer = str(self.answers.index([a for a in self.answers if a["name"] == "target"][0]) + 1)
             if self.acc:
-                feedback_positive.text += true_answer
+                feedback_positive.text += " " + true_answer
                 feedback_positive.setAutoDraw(True)
+                win.callOnFlip(response_clock.reset)
+                accept_box.accept_label.text = config["ACCEPT_BOX_TEXT"]
                 win.flip()
-                time.sleep(config["FEEDBACK_SHOW_TIME"])
-                feedback_positive.text = feedback_positive.text[:-len(true_answer)]
+
+                while response_clock.getTime() < config["FEEDBACK_SHOW_TIME"]:
+                    event.clearEvents()
+                    if mouse.isPressedIn(accept_box.accept_box):
+                        break
+                feedback_positive.text = feedback_positive.text[:-len(true_answer)-1]
             else:
-                feedback_negative.text += true_answer
+                feedback_negative.text += " " + true_answer
                 feedback_negative.setAutoDraw(True)
+                win.callOnFlip(response_clock.reset)
+                accept_box.accept_label.text = config["ACCEPT_BOX_TEXT"]
                 win.flip()
-                time.sleep(config["FEEDBACK_SHOW_TIME"])
-                feedback_negative.text = feedback_negative.text[:-len(true_answer)]
+
+                while response_clock.getTime() < config["FEEDBACK_SHOW_TIME"]:
+                    event.clearEvents()
+                    if mouse.isPressedIn(accept_box.accept_box):
+                        break
+                feedback_negative.text = feedback_negative.text[:-len(true_answer)-1]
             feedback_positive.setAutoDraw(False)
             feedback_negative.setAutoDraw(False)
 

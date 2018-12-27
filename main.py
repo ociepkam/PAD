@@ -61,11 +61,13 @@ trial_nr = 1
 # TRAINING
 show_info(win, join('.', 'messages', "instruction1.txt"), text_size=config['TEXT_SIZE'], screen_width=SCREEN_RES[0])
 
-if config["TRAINING_FEEDBACK"]:
-    accept_box.accept_label.text = config["ACCEPT_BOX_TEXT_FEEDBACK"]
 
 # show_image(window, 'instruction.png', SCREEN_RES)
 for item in config["TRAINING_TRIALS"]:
+    if config["TRAINING_FEEDBACK"]:
+        accept_box.accept_label.text = config["ACCEPT_BOX_TEXT_FEEDBACK"]
+    else:
+        accept_box.accept_label.text = config["ACCEPT_BOX_TEXT"]
     trial = Trial(win=win, config=config, item=item)
     trial.run(config=config, win=win, response_clock=response_clock, clock_image=clock_image, mouse=mouse,
               accept_box=accept_box, feedback=config["TRAINING_FEEDBACK"], feedback_positive=feedback_positive,
@@ -78,12 +80,12 @@ for item in config["TRAINING_TRIALS"]:
 # EXPERIMENT
 show_info(win, join('.', 'messages', "instruction2.txt"), text_size=config['TEXT_SIZE'], screen_width=SCREEN_RES[0])
 
-if config["EXPERIMENT_FEEDBACK"]:
-    accept_box.accept_label.text = config["ACCEPT_BOX_TEXT_FEEDBACK"]
-else:
-    accept_box.accept_label.text = config["ACCEPT_BOX_TEXT"]
 
 for item in config["EXPERIMENT_TRIALS"]:
+    if config["EXPERIMENT_FEEDBACK"]:
+        accept_box.accept_label.text = config["ACCEPT_BOX_TEXT_FEEDBACK"]
+    else:
+        accept_box.accept_label.text = config["ACCEPT_BOX_TEXT"]
     trial = Trial(win=win, config=config, item=item)
     trial.run(config=config, win=win, response_clock=response_clock, clock_image=clock_image, mouse=mouse,
               accept_box=accept_box, feedback=config["EXPERIMENT_FEEDBACK"], feedback_positive=feedback_positive,
