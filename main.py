@@ -1,4 +1,6 @@
+# -*- coding: utf-8 -*-
 import atexit
+import random
 from psychopy import visual, event, core, logging
 import time
 
@@ -13,12 +15,12 @@ from sources.trail import Trial
 from sources.accept_box import AcceptBox
 
 part_id, part_sex, part_age, date = experiment_info()
-NAME = "{}_{}_{}".format(part_id, part_sex, part_age)
+NAME = "{}_{}_{}".format(part_id, part_sex[:1], part_age)
 
 RESULTS = list()
 RESULTS.append(['TRIAL_NR', 'TASK_NR', 'EXPERIMENTAL', 'ACC', 'RT', 'ANSWER_TYPE', 'ANSWERS_ORDER'])
 
-RAND = "" #str(random.randint(100, 999))
+RAND = str(random.randint(100, 999))
 
 logging.LogFile(join('.', 'results', 'logging', NAME + '_' + RAND + '.log'), level=logging.INFO)
 
@@ -34,24 +36,15 @@ def save_beh():
 config = load_config()
 
 SCREEN_RES = get_screen_res()
-win = visual.Window(SCREEN_RES, fullscr=True, monitor='testMonitor', units='pix',
-                    screen=0, color=config["BACKGROUND_COLOR"], winType='pygame')
+win = visual.Window(SCREEN_RES, fullscr=True, monitor='testMonitor', units='pix', color=config["BACKGROUND_COLOR"])
 FRAMES_PER_SEC = get_frame_rate(win)
 
 clock_image = visual.ImageStim(win=win, image=join('images', 'clock.png'), interpolate=True,
                                size=config['CLOCK_SIZE'], pos=config['CLOCK_POS'])
 
 accept_box = AcceptBox(win, config["ACCEPT_BOX_POS"], config["ACCEPT_BOX_SIZE"], config["ACCEPT_BOX_TEXT"],
-                           config["START_BOX_COLOR"], config["START_TEXT_COLOR"], config["END_BOX_COLOR"],
-                           config["END_TEXT_COLOR"])
-
-feedback_positive = visual.TextStim(win=win, text=read_text_from_file(join('.', 'messages', "feedback_positive.txt")),
-                                    antialias=True, font=u'Arial', height=config['FEEDBACK_SIZE'], wrapWidth=win.size[0],
-                                    color=u'black', alignHoriz='center', alignVert='center', pos=config["FEEDBACK_POS"])
-
-feedback_negative = visual.TextStim(win=win, text=read_text_from_file(join('.', 'messages', "feedback_negative.txt")),
-                                    antialias=True, font=u'Arial', height=config['FEEDBACK_SIZE'], wrapWidth=win.size[0],
-                                    color=u'black', alignHoriz='center', alignVert='center', pos=config["FEEDBACK_POS"])
+                       config["START_BOX_COLOR"], config["START_TEXT_COLOR"], config["END_BOX_COLOR"],
+                       config["END_TEXT_COLOR"])
 
 mouse = event.Mouse()
 
@@ -59,11 +52,23 @@ response_clock = core.Clock()
 trial_nr = 1
 
 # TRAINING
-show_info(win, join('.', 'messages', "instruction1.txt"), text_size=config['TEXT_SIZE'], screen_width=SCREEN_RES[0])
-
-
+# show_info(win, join('.', 'messages', "instruction1.txt"), text_size=config['TEXT_SIZE'], screen_width=SCREEN_RES[0])
+show_image(win, "instrukcja_1.jpg", size=SCREEN_RES)
+show_image(win, "instrukcja_2.jpg", size=SCREEN_RES)
 # show_image(window, 'instruction.png', SCREEN_RES)
 for item in config["TRAINING_TRIALS"]:
+    text = read_text_from_file(join('.', 'messages', "feedback_positive.txt")) + \
+           read_text_from_file(join('.', 'messages', "feedback_info_{}.txt".format(item)))
+    feedback_positive = visual.TextStim(win=win, text=text, antialias=True, font=u'Arial',
+                                        height=config['FEEDBACK_SIZE'], wrapWidth=win.size[0], color=u'black',
+                                        alignHoriz='center', alignVert='center', pos=config["FEEDBACK_POS"])
+
+    text = read_text_from_file(join('.', 'messages', "feedback_negative.txt")) + \
+           read_text_from_file(join('.', 'messages', "feedback_info_{}.txt".format(item)))
+    feedback_negative = visual.TextStim(win=win, text=text, antialias=True, font=u'Arial',
+                                        height=config['FEEDBACK_SIZE'], wrapWidth=win.size[0], color=u'black',
+                                        alignHoriz='center', alignVert='center', pos=config["FEEDBACK_POS"])
+
     if config["TRAINING_FEEDBACK"]:
         accept_box.accept_label.text = config["ACCEPT_BOX_TEXT_FEEDBACK"]
     else:
@@ -78,10 +83,21 @@ for item in config["TRAINING_TRIALS"]:
     time.sleep(config["WAIT_TIME"])
 
 # EXPERIMENT
+feedback_positive = visual.TextStim(win=win, text=read_text_from_file(join('.', 'messages', "feedback_positive.txt")),
+                                    antialias=True, font=u'Arial', height=config['FEEDBACK_SIZE'],
+                                    wrapWidth=win.size[0],
+                                    color=u'black', alignHoriz='center', alignVert='center', pos=config["FEEDBACK_POS"])
+
+feedback_negative = visual.TextStim(win=win, text=read_text_from_file(join('.', 'messages', "feedback_negative.txt")),
+                                    antialias=True, font=u'Arial', height=config['FEEDBACK_SIZE'],
+                                    wrapWidth=win.size[0],
+                                    color=u'black', alignHoriz='center', alignVert='center', pos=config["FEEDBACK_POS"])
+
 show_info(win, join('.', 'messages', "instruction2.txt"), text_size=config['TEXT_SIZE'], screen_width=SCREEN_RES[0])
 
-
-for item in config["EXPERIMENT_TRIALS"]:
+trials = config["EXPERIMENT_TRIALS"]
+random.shuffle(trials)
+for item in trials:
     if config["EXPERIMENT_FEEDBACK"]:
         accept_box.accept_label.text = config["ACCEPT_BOX_TEXT_FEEDBACK"]
     else:

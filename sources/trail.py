@@ -8,7 +8,7 @@ from sources.check_exit import check_exit
 
 class Trial:
     def __init__(self, win, config, item):
-        images = [f for f in listdir(join("images", item))]
+        images = [f for f in listdir(join("images", item)) if not f.startswith(".")]
 
         task = [elem for elem in images if elem.split(".")[0] == item][0]
         task = visual.ImageStim(win=win, image=join('images', item, task), interpolate=True,
@@ -18,22 +18,21 @@ class Trial:
         elements = [elem for elem in images if elem.split(".")[0] != item]
         random.shuffle(elements)
 
-        for i, elem in enumerate(elements):
-            if len(elements) >= config["N_ANSWERS_IN_ROW"]:
-                answers_in_row = config["N_ANSWERS_IN_ROW"]
-            else:
-                answers_in_row = len(elements)
-            pos_x = config['ANSWERS_POS'][0] - ((answers_in_row - 1) / 2 - i % answers_in_row) \
-                    * (config["ANSWERS_SIZE"] + config["VIZ_OFFSET"][0])
-            pos_y = config['ANSWERS_POS'][1] - i//answers_in_row \
-                    * (config["ANSWERS_SIZE"] + config["VIZ_OFFSET"][1])
+        c = 0
+        for n_row, number_of_elements in enumerate(config["N_ANSWERS_IN_ROW"]):
+            row = elements[c:c+number_of_elements]
+            c += number_of_elements
+            for i, elem in enumerate(row):
+                pos_x = config['ANSWERS_POS'][0] - ((number_of_elements - 1) / 2 - i % number_of_elements) \
+                        * (config["ANSWERS_SIZE"] + config["VIZ_OFFSET"][0])
+                pos_y = config['ANSWERS_POS'][1] - n_row * (config["ANSWERS_SIZE"] + config["VIZ_OFFSET"][1])
 
-            image = visual.ImageStim(win=win, image=join('images', item, elem), interpolate=True,
-                                     size=config['ANSWERS_SIZE'], pos=[pos_x, pos_y])
+                image = visual.ImageStim(win=win, image=join('images', item, elem), interpolate=True,
+                                         size=config['ANSWERS_SIZE'], pos=[pos_x, pos_y])
 
-            frame = visual.Rect(win, width=config["ANSWERS_SIZE"], height=config["ANSWERS_SIZE"],
-                                pos=[pos_x, pos_y], lineColor="red")
-            answers.append({"name": elem.split(".")[0].split("_", 1)[1], "image": image, "frame": frame})
+                frame = visual.Rect(win, width=config["ANSWERS_SIZE"], height=config["ANSWERS_SIZE"],
+                                    pos=[pos_x, pos_y], lineColor=config["FRAME_COLOR"], lineWidth=config["FRAME_WIDTH"])
+                answers.append({"name": elem.split(".")[0].split("_", 1)[1], "image": image, "frame": frame})
 
         self.name = item
         self.task = task
@@ -83,34 +82,23 @@ class Trial:
             win.flip()
 
         if feedback:
-            time.sleep(0.1)
+            time.sleep(config["WAIT_FOR_FEEDBACK"])
             true_answer = str(self.answers.index([a for a in self.answers if a["name"] == "target"][0]) + 1)
-            if self.acc:
-                feedback_positive.text += " " + true_answer
-                feedback_positive.setAutoDraw(True)
-                win.callOnFlip(response_clock.reset)
-                accept_box.accept_label.text = config["ACCEPT_BOX_TEXT"]
-                win.flip()
 
-                while response_clock.getTime() < config["FEEDBACK_SHOW_TIME"]:
-                    event.clearEvents()
-                    if mouse.isPressedIn(accept_box.accept_box):
-                        break
-                feedback_positive.text = feedback_positive.text[:-len(true_answer)-1]
-            else:
-                feedback_negative.text += " " + true_answer
-                feedback_negative.setAutoDraw(True)
-                win.callOnFlip(response_clock.reset)
-                accept_box.accept_label.text = config["ACCEPT_BOX_TEXT"]
-                win.flip()
+            feedback = feedback_positive if self.acc else feedback_negative
+            print(feedback.text)
+            feedback.text = feedback.text.replace("<insert>", true_answer)
+            feedback.setAutoDraw(True)
+            win.callOnFlip(response_clock.reset)
+            accept_box.accept_label.text = config["ACCEPT_BOX_TEXT"]
+            win.flip()
 
-                while response_clock.getTime() < config["FEEDBACK_SHOW_TIME"]:
-                    event.clearEvents()
-                    if mouse.isPressedIn(accept_box.accept_box):
-                        break
-                feedback_negative.text = feedback_negative.text[:-len(true_answer)-1]
-            feedback_positive.setAutoDraw(False)
-            feedback_negative.setAutoDraw(False)
+            while response_clock.getTime() < config["FEEDBACK_SHOW_TIME"]:
+                event.clearEvents()
+                if mouse.isPressedIn(accept_box.accept_box):
+                    break
+                check_exit()
+            feedback.setAutoDraw(False)
 
         for ans in self.answers:
             ans["frame"].setAutoDraw(False)

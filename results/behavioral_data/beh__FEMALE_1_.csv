@@ -1,0 +1,2 @@
+TRIAL_NR,TASK_NR,EXPERIMENTAL,ACC,RT,ANSWER_TYPE,ANSWERS_ORDER
+1,9,False,False,14.672487758994976,perc_C,"['C', 'dist_target', 'sem_perc_C', 'sem_C', 'sem_perc_B', 'perc_C', 'target', 'sem_B', 'perc_B', 'B']"
