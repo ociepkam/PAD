@@ -29,7 +29,7 @@ ANSWERS_POS: [0, -150] # [x, y]
 
 VIZ_OFFSET: [30, 30] # [x, y], answers offset
 
-N_ANSWERS_IN_ROW: [3, 4] # List of ints. Each int represents row with n elements.
+N_ANSWERS_IN_ROW: [3, 4] # Each numer represent number of answers in futher rows
 
 # answer frame
 FRAME_COLOR: red
