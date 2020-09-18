@@ -1,81 +1,53 @@
-nothing: None
-
-TRAINING_TRIALS: ["01", "02"]
-
-EXPERIMENT_TRIALS: ["1", "2", "3", "4", "5", "6", "8", "9", "10", "12", "13", "14", "15", "16", "17", "18", "19", "20", "22", "23", "24", "25", "26", "27", "28", "29", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40"]
+# list of trials from \images
+TRAINING_TRIALS: ["12", "31"]
+EXPERIMENT_TRIALS: ["2", "4", "6", "7", "8", "9", "11", "13", "16", "19", "20", "21", "22", "23", "24", "25", "26", "28", "29", "32", "33", "35", "36", "37", "39", "40"]
 
 # feedback
-
 TRAINING_FEEDBACK: True
-
 EXPERIMENT_FEEDBACK: False
 
-FEEDBACK_SHOW_TIME: 1500
+FEEDBACK_SHOW_TIME: 1500 # in milli secunds
+WAIT_FOR_FEEDBACK: 0.2 # in secunds
 
 FEEDBACK_SIZE: 30
-
 FEEDBACK_POS: [0, 30]  # [x, y]
 
-WAIT_FOR_FEEDBACK: 0.2
-
-# time in secunds
-
-STIM_TIME: 20
-
-WAIT_TIME: 1
+# trial time
+STIM_TIME: 30 # in secunds
+WAIT_TIME: 1 # in secunds
 
 # visual parameters
+BACKGROUND_COLOR: Gainsboro
 
-BACKGROUND_COLOR: grey
-
-TEXT_SIZE: 32
+TEXT_SIZE: 32 # in instruction and feedback
 
 TASK_SIZE: 400
-
-TASK_POS: [0, 250]
+TASK_POS: [0, 250] # [x, y]
 
 ANSWERS_SIZE: 150
+ANSWERS_POS: [0, -150] # [x, y]
 
-ANSWERS_POS: [0, -150]
+VIZ_OFFSET: [30, 30] # [x, y], answers offset
 
-VIZ_OFFSET: [30, 30]
+N_ANSWERS_IN_ROW: [3, 4] # List of ints. Each int represents row with n elements.
 
-N_ANSWERS_IN_ROW: [3, 4]
-
-# frame
-
+# answer frame
 FRAME_COLOR: red
-
 FRAME_WIDTH: 4
 
-
 # accept box
-
-ACCEPT_BOX_POS: [0, -465]
-
-ACCEPT_BOX_SIZE: [200, 50]
+ACCEPT_BOX_POS: [0, -465] # [x, y]
+ACCEPT_BOX_SIZE: [200, 50] # [x, y]
 
 ACCEPT_BOX_TEXT: Dalej
-
 ACCEPT_BOX_TEXT_FEEDBACK: Sprawdz
 
-START_BOX_COLOR: #a7a5a5
-
-START_TEXT_COLOR: white
-
+START_BOX_COLOR: grey
+START_TEXT_COLOR: Gainsboro
 END_BOX_COLOR: blue
-
 END_TEXT_COLOR: black
 
-
-
-# clock
-
-## show clock n second before trial end
-
-SHOW_CLOCK: 5
-
-CLOCK_POS: [0, 490]
-
+# clock (show clock n second before trial end)
+SHOW_CLOCK: 5 # in seconds
+CLOCK_POS: [0, 490] # [x, y]
 CLOCK_SIZE: 80
-
